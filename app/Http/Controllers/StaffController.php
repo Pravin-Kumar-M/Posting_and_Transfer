@@ -8,12 +8,13 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Flasher\Toastr\Prime\ToastrInterface;
+
 
 
 class StaffController extends Controller
 {
     // home
+
 
     public function index()
     {
@@ -99,7 +100,7 @@ class StaffController extends Controller
             Experience::insert($experiences);
 
             toastr()
-                ->timeOut(1000)
+                ->timeOut(5000)
                 ->closeButton()
                 ->addSuccess('Your details are added successfully');
 
@@ -123,10 +124,28 @@ class StaffController extends Controller
 
     public function printPdf($id)
     {
-        $staff = Staff::with('experiences.office', 'experiences.cadre', 'experiences.subject')->findOrFail($id);
+        try {
+            // Increase execution time and memory limit globally for this request
+            set_time_limit(300); // Set execution time limit to 5 minutes
+            ini_set('memory_limit', '256M'); // Set memory limit if necessary
 
-        $pdf = Pdf::loadView('staff.print_pdf', compact('staff'));
-        $filename = strtolower(str_replace(' ', '_', $staff->name)) . '.pdf';
-        return $pdf->download($filename);
+            // Fetch staff details along with experiences
+            $staff = Staff::with(['experiences.office', 'experiences.cadre', 'experiences.subject'])
+                ->findOrFail($id);
+
+            // Generate the PDF
+            $pdf = Pdf::loadView('staff.print_pdf', compact('staff'))
+                ->setPaper('a4', 'portrait')
+                ->setOption('isRemoteEnabled', true);
+
+            // Generate the filename
+            $filename = strtolower(str_replace(' ', '_', $staff->name)) . '_details.pdf';
+
+            // Return the PDF as a download
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            // In case of error, redirect back with an error message
+            return redirect()->back()->with('error', 'Failed to generate PDF: ' . $e->getMessage());
+        }
     }
 }

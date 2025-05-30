@@ -31,10 +31,30 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => [
+                'required',
+                'email:dns',
+                function ($attribute, $value, $fail) {
+                    $disposableDomains = ['tempmail.com', 'mailinator.com'];
+                    $domain = substr(strrchr($value, "@"), 1);
+
+                    if (in_array($domain, $disposableDomains)) {
+                        $fail('The email domain is not allowed.');
+                    }
+                },
+            ],
+            'password' => [
+                'required',
+                'string',
+                'max:8',
+                'regex:/^(?=.*[A-Z])(?=.*[\W]).+$/',
+                'confirmed',
+            ],
+        ], [
+            'password.regex' => 'The password must contain at least one uppercase letter, one special character, and be a maximum of 8 characters long.',
         ]);
 
+        // Create the new user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -45,6 +65,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect to the dashboard or any intended route
+        return redirect()->route('dashboard')->with('status', 'Registration successful!');
     }
 }

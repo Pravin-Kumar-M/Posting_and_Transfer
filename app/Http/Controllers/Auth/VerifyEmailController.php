@@ -14,14 +14,23 @@ class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
+        // Check email domain validity
+        $emailDomain = explode('@', $request->user()->email)[1] ?? null;
+
+        if (!$emailDomain || !checkdnsrr($emailDomain, 'MX')) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'The email address has an invalid domain and cannot be verified.',
+            ]);
+        }
+
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+            return redirect()->intended(route('dashboard', absolute: false) . '?verified=1');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        return redirect()->intended(route('dashboard', absolute: false) . '?verified=1');
     }
 }

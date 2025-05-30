@@ -99,36 +99,13 @@
                         </table>
                     </div>
                     <div class="text-center">
-                        <a href="javascript:void(0);" id="printPdfBtn" class="btn btn-success">Print Pdf</a>
-                        <a href="{{url('dashboard')}}" class="btn btn-primary">Back</a>
+                        <a href="{{url('/admin/staff_directory')}}" class="btn btn-primary">Back</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('printPdfBtn').addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent default link action
-
-            // Show SweetAlert confirmation dialog
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to print the PDF?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, print!',
-                cancelButtonText: 'Cancel',
-                // Reverse button order to place 'Yes, print!' on the right side
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // If confirmed, redirect to the print PDF URL
-                    window.location.href = "{{ url('print_pdf', $staff->id) }}";
-                }
-            });
-        });
-    </script>
 
 
 </body>

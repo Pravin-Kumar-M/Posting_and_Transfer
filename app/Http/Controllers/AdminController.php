@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Cadre;
 use App\Models\Office;
+use App\Models\Staff;
 use App\Models\Subject;
 use Flasher\Laravel\Facade\Flasher;
 use Illuminate\Http\Request;
@@ -305,5 +306,23 @@ class AdminController extends Controller
         }
 
         return redirect()->route('admin.subject');
+    }
+
+    // staff directory
+
+    public function showStaff()
+    {
+        $staffMembers = Staff::all();
+        return view('admin.all_staff', compact('staffMembers'));
+    }
+
+    // each staff
+    public function viewStaff($id)
+    {
+        // Fetch the staff member by their ID
+        $staff = Staff::findOrFail($id);
+
+        // Return the view with the staff data
+        return view('admin.each_staff', compact('staff'));
     }
 }

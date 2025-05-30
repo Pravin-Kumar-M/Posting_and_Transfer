@@ -10,7 +10,7 @@ class Staff extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
+
         'name',
         'father_name',
         'email',
@@ -20,6 +20,7 @@ class Staff extends Model
         'gender',
         'image'
     ];
+
 
     public function experiences()
     {

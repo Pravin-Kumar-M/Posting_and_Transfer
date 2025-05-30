@@ -31,7 +31,7 @@
                     <a class="nav-link" href="#" id="menu">Reports</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="view_staff.php" id="menu">Staff Directory</a>
+                    <a class="nav-link" href="{{route('admin.all_staff')}}" id="menu">Staff Directory</a>
                 </li>
             </ul>
 

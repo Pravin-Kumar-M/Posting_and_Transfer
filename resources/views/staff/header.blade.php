@@ -18,7 +18,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav gap-3">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="{{route('staff.view_detail')}}" id="menu">Your Details</a>
+                    <a class="nav-link text-white" href="#" id="menu">Your Details</a>
                 </li>
             </ul>
             <!-- Logout button aligned to the right -->

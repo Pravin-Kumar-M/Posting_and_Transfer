@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StaffController;
-use App\Http\Middleware\Admin;
 use Illuminate\Support\Facades\Route;
 
 // home
@@ -23,6 +25,10 @@ Route::middleware('auth')->group(function () {
 
 Route::view('/login', 'login')->name('login');
 Route::view('/register', 'register')->name('register');
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
+
+
 
 // cadre
 Route::get('admin/cadre', [AdminController::class, 'cadre'])->name('admin.cadre');
@@ -54,13 +60,20 @@ Route::get('/staff/view/{id?}', [StaffController::class, 'view_detail'])->name('
 Route::get('print_pdf/{id}', [StaffController::class, 'printPdf'])->name('staff.print_pdf');
 
 
-
-
-
 // admin dashboard
 Route::get('admin/dashboard', [AdminController::class, 'index'])
     ->middleware(['auth', 'admin'])
     ->name('admin.dashboard');
+
+// all staff
+Route::get('/admin/staff_directory', [AdminController::class, 'showStaff'])->name('admin.all_staff');
+
+// view individual staff detail
+Route::get('/admin/staff_directory/staff{id}', [AdminController::class, 'viewStaff'])->name('admin.each_staff');
+// In the web.php routes file
+Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])->name('verify-otp');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify-otp');
+
 
 
 require __DIR__ . '/auth.php';
